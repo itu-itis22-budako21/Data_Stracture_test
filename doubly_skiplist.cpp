@@ -52,7 +52,6 @@ class DoublySkipList_Node{
             below=NULL;
         }
         ~DoublySkipList_Node(){
-            //delete data;
         }
         Employee* get_data(){
             return data;
@@ -85,23 +84,22 @@ class DoublySkipList{
             head=NULL;
         }
         ~DoublySkipList(){
-            DoublySkipList_Node* left;
-            left=head;
-            for(int k=0;k<height-1;k++){
-                while(left!=NULL){
-                    DoublySkipList_Node* move1=left;
-                    left=left->get_next();
-                    delete move1;
-                    cout<<"ad";
-                }
+            while(head!=NULL){
+                DoublySkipList_Node* left;
+                left=head;
+                head=head->get_below();
+                    while(left!=NULL){
+                        DoublySkipList_Node* move1=left;
+                        left=left->get_next();
+                        if(move1->get_below()==NULL){
+                            delete move1->get_data();
+                        }
+                        delete move1;
+                        
+                    }
+
+                
             }
-            left=head;
-            while(left!=NULL){
-                DoublySkipList_Node* down=left;
-                left=left->get_below();
-                delete down;
-            }
-            delete head;
 
         }
         void insert(Employee* emp){
@@ -192,6 +190,9 @@ class DoublySkipList{
                 else if(top_r->get_next()->get_data()->get_id()==r_id){
                     DoublySkipList_Node* r=top_r->get_next();
                     top_r->set_next(r->get_next());
+                    if(r->get_below()==NULL){
+                        delete r->get_data();
+                    }
                     delete r;
                     if(top_r->get_below()==NULL){
                         break;
@@ -225,7 +226,7 @@ int main(int argc,char** argv){
     //clock_t start =clock();
     DoublySkipList* L=new DoublySkipList(4);
     ifstream file1;
-    file1.open(argv[1]);
+    file1.open("10k_employees.csv");
     string line;
     int i=0;
     while (getline(file1,line)){
@@ -265,7 +266,7 @@ int main(int argc,char** argv){
     cout<<fid<<endl;
     ifstream file_o;
     int test=0;
-    file_o.open(argv[2]);
+    file_o.open("operations_for_10k_1.csv");
     while(getline(file_o,line)){
         test++;
         size_t bingo=line.find(";");
@@ -319,7 +320,7 @@ int main(int argc,char** argv){
     delete L;
     //clock_t end =clock();
     //cout<<L->search(1)->get_dep()<<endl;
-    return 1;
+    return 0;
 }
 /*      
 @Author
